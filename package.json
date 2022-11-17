@@ -1,0 +1,7 @@
+{
+  "name": "my-mini-vue",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:clr1235/my-mini-vue.git",
+  "license": "MIT"
+}
