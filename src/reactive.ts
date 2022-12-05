@@ -4,7 +4,6 @@ export function reactive(raw: any) {
     return new Proxy(raw, {
         get(target, key, receiver){
             const res = Reflect.get(target, key, receiver)
-
             // 此处会进行依赖收集
             track(target, key);
             return res;
