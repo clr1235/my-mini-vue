@@ -1,8 +1,11 @@
+import {extend} from './shared'
+
 let activeEffect:any;
 class ReactiveEffect {
     deps = []
     active = true
     private _fn:any;
+    onStop?: () => void;
     constructor(fn: any, public scheduler?:any) {
         this._fn = fn;
     }
@@ -13,8 +16,12 @@ class ReactiveEffect {
         return this._fn();
     }
     stop() {
+        // 使用active变量进行优化
         if (this.active) {
             cleanupEffect(this)
+            if (this.onStop) {
+                this.onStop()
+            }
             this.active = false
         }
     }
@@ -35,6 +42,9 @@ export function effect(fn: any, options: any = {}) {
     // 立即执行传入的fn，采用一个抽离的思想将fn传入ReactiveEffect类中，
     // 通过实例去调用
     const _effect = new ReactiveEffect(fn, scheduler)
+    // 将options中的变量   合并到_effect对象上
+    extend(_effect, options);
+
     _effect.run();
     // effect执行之后返回runner方法, run方法中涉及到了this的指向问题，所以此处需bind绑定
     const runner: any = _effect.run.bind(_effect)
