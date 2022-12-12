@@ -70,6 +70,7 @@ export function track(target: any, key: any) {
         dep = new Set();
         depsMap.set(key, dep);
     }
+    if (!activeEffect) return;
     // 将依赖收集到Set结构中，收集的也就是传入effect的fn，也就是抽象出来的ReactiveEffect类的实例
     dep.add(activeEffect)
     // 将dep反向存储在activeEffect对象的deps数组中
