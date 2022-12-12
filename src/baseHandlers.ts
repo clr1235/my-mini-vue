@@ -5,12 +5,24 @@ const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
 
+export const enum ReactiveFlags {
+    IS_REACTIVE = '__v_isReactive',
+    IS_READONLY = '__v_isReadonly',
+}
+
 // 抽取出get的创建方法
 export function createGetter(isReadonly: any = false) {
     return function get(target: any, key:any, receiver:any) {
         const res = Reflect.get(target, key, receiver)
+        // console.log(`${key}触发了get`)
+        // 根据参数isReadonly来区分该对象是reactive的还是readonly的
+        if (key === ReactiveFlags.IS_REACTIVE) {
+            return !isReadonly
+        } else if (key === ReactiveFlags.IS_READONLY) {
+            return isReadonly
+        }
+        // 此处会进行依赖收集 readonly对象不能set所以不需要进行依赖的收集和触发
         if (!isReadonly) {
-            // 此处会进行依赖收集
             track(target, key);
         }
         return res;
