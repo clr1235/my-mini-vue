@@ -1,14 +1,12 @@
 import {track, trigger} from './effect'
+import { ReactiveFlags } from './reactive';
 
 // 代码优化 将get的创建 只初始化一次
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
 
-export const enum ReactiveFlags {
-    IS_REACTIVE = '__v_isReactive',
-    IS_READONLY = '__v_isReadonly',
-}
+
 
 // 抽取出get的创建方法
 export function createGetter(isReadonly: any = false) {
