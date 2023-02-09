@@ -1,6 +1,7 @@
 import {extend} from './shared'
 
 let activeEffect:any;
+let shouldTrack: any;
 class ReactiveEffect {
     deps = []
     active = true
@@ -10,10 +11,21 @@ class ReactiveEffect {
         this._fn = fn;
     }
     run() {
+        // stop状态的话 不执行fn函数
+        if (!this.active) {
+            return this._fn();
+        }
+
+        // 控制是否进行依赖收集
+        shouldTrack = true;
         // 将实例绑定到全局变量activeEffect上，以便其它地方可以使用
         activeEffect = this;
         // 执行传入的fn
-        return this._fn();
+        const result = this._fn();
+        // 执行之后 重置
+        shouldTrack = false;
+
+        return result
     }
     stop() {
         // 使用active变量进行优化
@@ -59,6 +71,8 @@ export function effect(fn: any, options: any = {}) {
 // 而 Map 的键是原始对象 target 的 key，Map 的值是一个由副作用函数组成的 Set。
 let targetMap = new WeakMap();
 export function track(target: any, key: any) {
+    if (!isTracking()) return;
+
     // 三者的依赖关系 target ==> key ==> dep
     let depsMap = targetMap.get(target);
     if(!depsMap) {
@@ -72,11 +86,16 @@ export function track(target: any, key: any) {
         dep = new Set();
         depsMap.set(key, dep);
     }
-    if (!activeEffect) return;
+    
     // 将依赖收集到Set结构中，收集的也就是传入effect的fn，也就是抽象出来的ReactiveEffect类的实例
+    if (dep.has(activeEffect)) return;
     dep.add(activeEffect)
     // 将dep反向存储在activeEffect对象的deps数组中
     activeEffect?.deps.push(dep)
+}
+
+function isTracking() {
+    return shouldTrack && activeEffect !== undefined
 }
 
 // 触发依赖
