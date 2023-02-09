@@ -1,6 +1,6 @@
 // 响应式的本质核心就是 当变量的值改变的时候自动的去更新数据
 import {reactive} from '../reactive';
-import { effect, stop, onStop } from '../effect';
+import { effect, stop } from '../effect';
 // describe 是一个将多个相关的测试组合到一起的块
 describe('effect', () => {
     it('happy path', () => {

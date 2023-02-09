@@ -54,7 +54,9 @@ export function effect(fn: any, options: any = {}) {
 }
 
 // 依赖收集
-// 创建全局的targetMap，保存target、key、dep三者的指向关系，方便后续触发依赖时取值
+// 原始对象target，操作的属性key，以及副作用函数effectFn三者之间的关系
+// WeakMap 的键是原始对象 target，WeakMap 的值是一个Map 实例，
+// 而 Map 的键是原始对象 target 的 key，Map 的值是一个由副作用函数组成的 Set。
 let targetMap = new WeakMap();
 export function track(target: any, key: any) {
     // 三者的依赖关系 target ==> key ==> dep
