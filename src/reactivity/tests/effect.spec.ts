@@ -34,4 +34,35 @@ describe('effect', () => {
         // 验证effect 返回值 runner能否正确执行并返回传入的fn的返回值
         expect(res).toBe('foo')
     })
+
+    // vue3 schduler的单测
+    it('scheduler', () => {
+        /**
+         * 1. 通过effect的第二个参数给定一个schduler的函数
+         * 2. 当 effect 第一次执行的时候，会执行第一个参数 fn
+         * 3. 当响应式对象set 即update时，不会执行fn，而是执行schduler
+         * 4. 如果当执行runner的时候，会再次执行fn
+         */
+        let dummy;
+        let run: any;
+        const scheduler = jest.fn(() => {
+            run = runner
+        })
+        const obj = reactive({foo: 1})
+        const runner = effect(() => {
+            dummy = obj.foo
+        }, {scheduler})
+
+        expect(scheduler).not.toHaveBeenCalled()
+        expect(dummy).toBe(1)
+        // should be called on first trigger
+        obj.foo++
+        expect(scheduler).toHaveBeenCalledTimes(1)
+
+        expect(dummy).toBe(1)
+
+        run()
+
+        expect(dummy).toBe(2)
+    })
 })

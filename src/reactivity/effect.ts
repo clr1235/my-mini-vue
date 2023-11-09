@@ -11,8 +11,7 @@ let bucket = new WeakMap()
 // 用于构造副作用函数的类
 class ReactiveEffect {
     private _fn: any;
-
-    constructor(fn) {
+    constructor(fn, public scheduler?) {
         this._fn = fn;
     }
 
@@ -24,14 +23,14 @@ class ReactiveEffect {
 }
 
 // 副作用函数
-export function effect(fn) {
-    const _effect = new ReactiveEffect(fn)
+export function effect(fn, options: any = {}) {
+    const _effect = new ReactiveEffect(fn, options.scheduler)
     
     // 执行副作用函数 目的是触发响应式数据的读取操作，进而触发Proxy的get拦截函数，在其中进行副作用函数的收集
     _effect.run()
 
-    
-    return _effect.run.bind(_effect)
+    const runner = _effect.run.bind(_effect)
+    return runner
 }
 
 // 依赖收集 
@@ -63,5 +62,11 @@ export function trigger(target, key) {
 
     // 循环执行所有的依赖
     const effectsToRun = new Set(deps)
-    effectsToRun && effectsToRun.forEach((effectFn:any) => effectFn.run())
+    effectsToRun && effectsToRun.forEach((effectFn:any) => {
+        if (effectFn.scheduler) {
+            effectFn.scheduler()
+        } else {
+            effectFn.run()
+        }
+    })
 }
