@@ -14,7 +14,7 @@ describe('effect', () => {
         expect(nextAge).toBe(11)
 
         // update
-        nextAge++
+        user.age++
         expect(nextAge).toBe(12)
         
     })

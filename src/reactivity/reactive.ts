@@ -15,7 +15,7 @@ export function reactive(raw: any) {
             // 设置属性值
             target[key] = value
             // 触发依赖
-            trigger(target, key, value)
+            trigger(target, key)
             // 返回值
             const res = Reflect.set(target, key, value)
             return res
