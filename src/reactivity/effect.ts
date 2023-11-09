@@ -19,7 +19,7 @@ class ReactiveEffect {
     run() {
         // 将注册好的副作用函数，赋值给activeEffect
         activeEffect = this;
-        this._fn()
+        return this._fn()
     }
 }
 
@@ -30,7 +30,8 @@ export function effect(fn) {
     // 执行副作用函数 目的是触发响应式数据的读取操作，进而触发Proxy的get拦截函数，在其中进行副作用函数的收集
     _effect.run()
 
-
+    
+    return _effect.run.bind(_effect)
 }
 
 // 依赖收集 
