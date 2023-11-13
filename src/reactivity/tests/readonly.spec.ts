@@ -1,4 +1,4 @@
-import { readonly } from "../reactive";
+import { isReadonly, readonly } from "../reactive";
 
 // 测试readonly方法，根据vue3的api知道，readonly方法跟reactive方法类似，唯一不同的是readonly返回一个只读的代理对象
 describe('readonly', () => {
@@ -9,5 +9,8 @@ describe('readonly', () => {
         expect(original).not.toBe(obj);
 
         expect(obj.foo).toBe(1)
+
+        expect(isReadonly(obj)).toBe(true)
+        expect(isReadonly(original)).toBe(false)
     })
 })

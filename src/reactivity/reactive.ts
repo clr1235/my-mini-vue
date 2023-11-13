@@ -1,6 +1,11 @@
 import { mutableHandlers, readonlyHandlers} from './baseHandlers'
 
 
+export const enum ReactiveFlags {
+    IS_REACTIVE = '__v_isReactive',
+    IS_READONLY = '__v_isReadonly'
+}
+
 // vue3的reactive()方法，返回一个代理的对象
 export function reactive(raw: any) {
     return createReactive(raw, mutableHandlers)
@@ -12,4 +17,16 @@ export function readonly(raw: any) {
 
 function createReactive(raw: any, baseHandlers: any) {
     return new Proxy(raw, baseHandlers)
+}
+
+// isReactive 检查一个对象是否是由 reactive() 或 shallowReactive() 创建的代理。
+export function isReactive(value) {
+    // 在创建getter函数时传入了isReadonly参数，可以根据此参数来区分是什么类型，
+    // 而想要执行getter函数，只需要触发代理对象的get操作即可，也就是我们此方法中传入的参数value，只需要读取value上的某个属性即可触发get操作
+    // !!是为了以防传入的value不是代理对象时会报错，也就是将undefined转为布尔值
+    return !!value[ReactiveFlags.IS_REACTIVE]
+}
+// isReadonly 检查传入的值是否为只读对象
+export function isReadonly(value) {
+    return !!value[ReactiveFlags.IS_READONLY]
 }
