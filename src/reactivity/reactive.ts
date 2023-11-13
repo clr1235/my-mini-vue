@@ -22,3 +22,17 @@ export function reactive(raw: any) {
         },
     })
 }
+// 返回一个只读的代理对象，也就意味着不允许set，那么也就不需要tarck和trigger
+export function readonly(raw: any) {
+    return new Proxy(raw, {
+        get(target, key) {
+            // 返回值
+            const res = Reflect.get(target, key)
+            return res
+        },
+        set(target, key, value) {
+            // 可以在set时给一个warning
+            return true
+        },
+    })
+}
