@@ -11,6 +11,8 @@ let bucket = new WeakMap()
 // 用于构造副作用函数的类
 class ReactiveEffect {
     private _fn: any;
+    // 定义deps数组，用来存储所有包含当前副作用函数的依赖集合
+    deps = []
     constructor(fn, public scheduler?) {
         this._fn = fn;
     }
@@ -20,6 +22,23 @@ class ReactiveEffect {
         activeEffect = this;
         return this._fn()
     }
+
+    // 在类上定义stop方法，方便后续实例调用
+    stop() {
+        // 根据单元测试知道，此处需要清除掉对应的effect
+        cleanupEffect(this)
+    }
+}
+
+function cleanupEffect(effect) {
+    for(let i = 0; i < effect.deps.length; i++) {
+        // 循环取出 依赖集合deps
+        const deps = effect.deps[i]
+        // 将 effectFn 从依赖集合中移除
+        deps.delete(effect)
+    }
+    // 最后需要重置effectFn.deps数组
+    effect.deps.length = 0
 }
 
 // 副作用函数
@@ -29,7 +48,9 @@ export function effect(fn, options: any = {}) {
     // 执行副作用函数 目的是触发响应式数据的读取操作，进而触发Proxy的get拦截函数，在其中进行副作用函数的收集
     _effect.run()
 
-    const runner = _effect.run.bind(_effect)
+    const runner: any = _effect.run.bind(_effect)
+    runner.effect = _effect
+
     return runner
 }
 
@@ -51,6 +72,8 @@ export function track(target, key) {
 
     // 最后将当前激活的副作用函数添加到 deps 中
     deps.add(activeEffect)
+    // 将收集到的deps依赖集合，添加到 activeEffect.deps 数组中
+    activeEffect.deps.push(deps)
 }
 
 // 触发依赖
@@ -69,4 +92,9 @@ export function trigger(target, key) {
             effectFn.run()
         }
     })
+}
+
+
+export function stop(runnner) {
+    runnner.effect.stop()
 }

@@ -1,5 +1,5 @@
 import { reactive } from "../reactive";
-import {effect} from '../effect'
+import {effect, stop} from '../effect'
 
 // 副作用函数 测试用例
 describe('effect', () => {
@@ -64,5 +64,22 @@ describe('effect', () => {
         run()
 
         expect(dummy).toBe(2)
+    })
+
+    it('stop', () => {
+        let dummy;
+        const obj = reactive({prop: 1})
+        const runner = effect(() => {
+            dummy = obj.prop
+        })
+        obj.prop = 2
+        expect(dummy).toBe(2)
+        stop(runner)
+        obj.prop = 3
+        // 调用stop方法之后，响应式数据不再更新，也就说调用stop之后不需要执行对应的effect
+        expect(dummy).toBe(2)
+        // 调用runner之后 值更新
+        runner()
+        expect(dummy).toBe(3)
     })
 })
