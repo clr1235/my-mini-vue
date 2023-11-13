@@ -81,10 +81,14 @@ export function effect(fn, options: any = {}) {
     return runner
 }
 
+// 用来判断是否应该执行收集依赖相关的操作
+function isTracking() {
+    return shoudleTrack && activeEffect !== undefined
+}
+
 // 依赖收集 
 export function track(target, key) {
-    if (!activeEffect) return;
-    if (!shoudleTrack) return; 
+    if(!isTracking()) return
 
     // bucket，用来存储 原始对象target 和 depsMap 的映射关系。即，bucket是一个WeakMap：target ------> depsMap
     // 根据 target 从 bucket 中取得 depsMap，它也是一个Map类型：key ---> effects
@@ -100,6 +104,7 @@ export function track(target, key) {
     }
 
     // 最后将当前激活的副作用函数添加到 deps 中
+    if (deps.has(activeEffect)) return;
     deps.add(activeEffect)
     // 将收集到的deps依赖集合，添加到 activeEffect.deps 数组中
     activeEffect.deps.push(deps)
