@@ -1,4 +1,4 @@
-
+import { extend } from "../shared";
 
 // 声明一个activeEffect 用来存储当前激活的副作用函数
 let activeEffect;
@@ -15,6 +15,8 @@ class ReactiveEffect {
     deps = []
     // 用来控制是否每次都需要执行 cleanupEffect
     active = true;
+    // onStop方法，根据单元测试知道，需要在stop方法中调用一次
+    onStop?: () => void
 
     constructor(fn, public scheduler?) {
         this._fn = fn;
@@ -31,6 +33,7 @@ class ReactiveEffect {
         // 根据单元测试知道，此处需要清除掉对应的effect
         if (this.active) {
             cleanupEffect(this)
+            this.onStop && this.onStop()
             this.active = false
         }
         
@@ -51,6 +54,8 @@ function cleanupEffect(effect) {
 // 副作用函数
 export function effect(fn, options: any = {}) {
     const _effect = new ReactiveEffect(fn, options.scheduler)
+    // 将传入的options对象的属性全部继承到_effect实例上
+    extend(_effect, options)
     
     // 执行副作用函数 目的是触发响应式数据的读取操作，进而触发Proxy的get拦截函数，在其中进行副作用函数的收集
     _effect.run()
