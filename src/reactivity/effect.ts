@@ -13,6 +13,9 @@ class ReactiveEffect {
     private _fn: any;
     // 定义deps数组，用来存储所有包含当前副作用函数的依赖集合
     deps = []
+    // 用来控制是否每次都需要执行 cleanupEffect
+    active = true;
+
     constructor(fn, public scheduler?) {
         this._fn = fn;
     }
@@ -26,7 +29,11 @@ class ReactiveEffect {
     // 在类上定义stop方法，方便后续实例调用
     stop() {
         // 根据单元测试知道，此处需要清除掉对应的effect
-        cleanupEffect(this)
+        if (this.active) {
+            cleanupEffect(this)
+            this.active = false
+        }
+        
     }
 }
 
