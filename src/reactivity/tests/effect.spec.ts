@@ -75,7 +75,10 @@ describe('effect', () => {
         obj.prop = 2
         expect(dummy).toBe(2)
         stop(runner)
-        obj.prop = 3
+        // obj.prop = 3 // 只触发set操作
+        // ++会同时触发get和set操作，而我们stop方法中对执行了cleanupEffect对依赖进行了清理，如果此处触发get的话会执行track进行依赖收集，
+        // 那么我们在stop中对依赖进行的清理就是白做了，在后续set的时候触发并执行依赖，所以此时会测试不通过
+        obj.prop++  
         // 调用stop方法之后，响应式数据不再更新，也就说调用stop之后不需要执行对应的effect
         expect(dummy).toBe(2)
         // 调用runner之后 值更新

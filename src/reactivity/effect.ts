@@ -2,6 +2,9 @@ import { extend } from "../shared";
 
 // 声明一个activeEffect 用来存储当前激活的副作用函数
 let activeEffect;
+// shoudleTrack 用来控制是否应该收集依赖
+let shoudleTrack;
+
 
 // 创建bucket，用来收集依赖
 let bucket = new WeakMap()
@@ -23,9 +26,21 @@ class ReactiveEffect {
     }
 
     run() {
+        // stop()执行完之后active变为false，也就是说此时是调用了stop的状态
+        if (!this.active) {
+            return this._fn()
+        }
+
+        // 初始化以及没有调用stop()走这块
+        shoudleTrack = true
         // 将注册好的副作用函数，赋值给activeEffect
         activeEffect = this;
-        return this._fn()
+        const result = this._fn()
+        // 执行完fn之后，重置 shoudleTrack
+        shoudleTrack = false
+
+        
+        return result
     }
 
     // 在类上定义stop方法，方便后续实例调用
@@ -69,6 +84,8 @@ export function effect(fn, options: any = {}) {
 // 依赖收集 
 export function track(target, key) {
     if (!activeEffect) return;
+    if (!shoudleTrack) return; 
+
     // bucket，用来存储 原始对象target 和 depsMap 的映射关系。即，bucket是一个WeakMap：target ------> depsMap
     // 根据 target 从 bucket 中取得 depsMap，它也是一个Map类型：key ---> effects
     let depsMap = bucket.get(target)
