@@ -12,5 +12,7 @@ describe('readonly', () => {
 
         expect(isReadonly(obj)).toBe(true)
         expect(isReadonly(original)).toBe(false)
+        // 嵌套测试
+        expect(isReadonly(obj.bar)).toBe(true)
     })
 })
