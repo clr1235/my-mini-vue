@@ -15,4 +15,13 @@ describe('readonly', () => {
         // 嵌套测试
         expect(isReadonly(obj.bar)).toBe(true)
     })
+
+    it('should call console.warn when set', () => {
+        console.warn = jest.fn()
+        const user = readonly({
+            age: 10
+        })
+        user.age = 11
+        expect(console.warn).toHaveBeenCalled()
+    })
 })

@@ -1,4 +1,4 @@
-import { mutableHandlers, readonlyHandlers} from './baseHandlers'
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers} from './baseHandlers'
 
 
 export const enum ReactiveFlags {
@@ -13,6 +13,10 @@ export function reactive(raw: any) {
 // 返回一个只读的代理对象，也就意味着不允许set，那么也就不需要tarck和trigger
 export function readonly(raw: any) {
     return createReactive(raw, readonlyHandlers)
+}
+// readonly()的浅层作用形式，也就是说一个对象中只有第一层是响应式的，其内部嵌套的对象是普通的对象
+export function shallowReadonly(raw: any) {
+    return createReactive(raw, shallowReadonlyHandlers)
 }
 
 function createReactive(raw: any, baseHandlers: any) {
