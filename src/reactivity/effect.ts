@@ -82,7 +82,7 @@ export function effect(fn, options: any = {}) {
 }
 
 // 用来判断是否应该执行收集依赖相关的操作
-function isTracking() {
+export function isTracking() {
     return shoudleTrack && activeEffect !== undefined
 }
 
@@ -103,12 +103,17 @@ export function track(target, key) {
         depsMap.set(key, (deps = new Set()))
     }
 
+    trackEffects(deps)
+}
+
+export function trackEffects(deps) {
     // 最后将当前激活的副作用函数添加到 deps 中
     if (deps.has(activeEffect)) return;
     deps.add(activeEffect)
     // 将收集到的deps依赖集合，添加到 activeEffect.deps 数组中
     activeEffect.deps.push(deps)
 }
+
 
 // 触发依赖
 export function trigger(target, key) {
@@ -117,6 +122,10 @@ export function trigger(target, key) {
     if (!depsMap) return;
     const deps = depsMap.get(key)
 
+    triggerEffects(deps)
+}
+
+export function triggerEffects(deps) {
     // 循环执行所有的依赖
     const effectsToRun = new Set(deps)
     effectsToRun && effectsToRun.forEach((effectFn:any) => {

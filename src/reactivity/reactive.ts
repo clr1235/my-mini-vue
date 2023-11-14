@@ -19,7 +19,7 @@ export function shallowReadonly(raw: any) {
     return createReactive(raw, shallowReadonlyHandlers)
 }
 
-function createReactive(raw: any, baseHandlers: any) {
+export function createReactive(raw: any, baseHandlers: any) {
     return new Proxy(raw, baseHandlers)
 }
 

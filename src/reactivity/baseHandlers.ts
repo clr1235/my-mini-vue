@@ -10,7 +10,6 @@ const shallowReadonlyGet = createGetter(true, true)
 
 export function createGetter(isReadonly = false, shallow = false) {
     return function get(target, key) {
-        console.log('触发的是啥：', key)
         // isReactive方法和isReadonly方法的执行结果
         if (key === ReactiveFlags.IS_REACTIVE) {
             return !isReadonly
