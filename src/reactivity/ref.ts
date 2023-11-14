@@ -20,6 +20,8 @@ class RefTmpl {
     public deps: any;
     // 存储原始的传入的value值，用来做后续的对比
     private originalValue: any
+    // 标识实例是不是一个ref
+    public __v_isRef = true
 
     constructor(value) {
         this.originalValue = value
@@ -68,4 +70,9 @@ function convert(value) {
  */
 export function ref(value) {
     return new RefTmpl(value)
+}
+
+// 检查某个值是否为 ref。
+export function isRef(ref) {
+    return !!ref.__v_isRef
 }
