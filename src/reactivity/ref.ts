@@ -72,7 +72,11 @@ export function ref(value) {
     return new RefTmpl(value)
 }
 
-// 检查某个值是否为 ref。
+// isRef() 检查某个值是否为 ref。
 export function isRef(ref) {
     return !!ref.__v_isRef
+}
+// unRef() 如果参数是一个ref对象，则返回内部值，否则返回参数本身。
+export function unRef(ref) {
+    return isRef(ref) ? ref.value : ref
 }

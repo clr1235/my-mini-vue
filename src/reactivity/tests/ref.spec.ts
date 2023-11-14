@@ -1,6 +1,6 @@
 import { effect } from '../effect'
 import { reactive } from '../reactive'
-import {ref, isRef} from '../ref'
+import {ref, isRef, unRef} from '../ref'
 
 describe('ref', () => {
     it('happy path', () => {
@@ -54,5 +54,13 @@ describe('ref', () => {
         expect(isRef(1)).toBe(false)
         expect(isRef(user)).toBe(false)
 
+    })
+
+    // 测试 unRef
+    it('unRef', () => {
+        const a = ref(1)
+
+        expect(unRef(a)).toBe(1)
+        expect(unRef(1)).toBe(1)
     })
 })
