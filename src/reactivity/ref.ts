@@ -80,3 +80,21 @@ export function isRef(ref) {
 export function unRef(ref) {
     return isRef(ref) ? ref.value : ref
 }
+
+
+export function proxyRefs(objectWithRefs) {
+    return new Proxy(objectWithRefs, {
+        get(target, key) {
+            return unRef(Reflect.get(target, key))
+        },
+
+        set(target, key, value) {
+            // 如果要赋值的属性是一个ref类型，且将要给到的新值不是一个ref类型的话，则修改要赋值的属性的.value属性值
+            if(isRef(target[key]) && !isRef(value)) {
+                return (target[key].value = value)
+            } else {
+                return Reflect.set(target, key, value)
+            }
+        }
+    })
+}
