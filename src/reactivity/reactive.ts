@@ -34,3 +34,8 @@ export function isReactive(value) {
 export function isReadonly(value) {
     return !!value[ReactiveFlags.IS_READONLY]
 }
+
+// isProxy() 检查一个对象是否是由 reactive()、readonly()、shallowReactive() 或 shallowReadonly() 创建的代理。
+export function isProxy(value) {
+    return isReactive(value) || isReadonly(value)
+}

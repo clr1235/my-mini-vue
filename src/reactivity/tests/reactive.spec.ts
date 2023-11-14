@@ -1,4 +1,4 @@
-import { reactive, isReactive } from "../reactive"
+import { reactive, isReactive, isProxy } from "../reactive"
 
 // 测试reactive方法
 describe('reactive', () => {
@@ -12,6 +12,8 @@ describe('reactive', () => {
 
         expect(isReactive(obj)).toBe(true)
         expect(isReactive(original)).toBe(false)
+        // isProxy
+        expect(isProxy(obj)).toBe(true)
     })
 
     // 嵌套测试
