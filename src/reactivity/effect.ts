@@ -12,7 +12,7 @@ let bucket = new WeakMap()
 
 
 // 用于构造副作用函数的类
-class ReactiveEffect {
+export class ReactiveEffect {
     private _fn: any;
     // 定义deps数组，用来存储所有包含当前副作用函数的依赖集合
     deps = []
