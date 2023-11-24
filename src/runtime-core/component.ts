@@ -21,12 +21,12 @@ export function setupStateFulComponent(instance: any) {
     const {setup} = Component
     if (setup) {
         const setupResult = setup()
-        handleSetupRersult(instance, setupResult)
+        handleSetupResult(instance, setupResult)
     }
 }
 
 
-function handleSetupRersult(instance: any, setupResult: any) {
+function handleSetupResult(instance: any, setupResult: any) {
     
     if (typeof setupResult === 'object') {
         instance.setupState = setupResult
