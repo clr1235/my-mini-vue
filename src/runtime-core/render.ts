@@ -7,7 +7,7 @@ export function render(vnode, container) {
 
 function patch(vnode, container) {
     // 处理组件  判断vnode是不是一个element，如果是component的话
-
+    console.log(vnode.type)
     processComponent(vnode, container)
 }
 
