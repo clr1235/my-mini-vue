@@ -1,8 +1,12 @@
 import {h} from '../../lib/guide-mini-vue.esm.js'
 
+// 为了便于在浏览器上调试 this.$el
+window.self = null
+
 export const App = {
 
     render() {
+        window.self = this;
         return h(
             'div', 
             {

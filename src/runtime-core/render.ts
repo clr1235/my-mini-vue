@@ -30,7 +30,8 @@ function processElement(vnode: any, container: any) {
 // 初始化element
 function mountElement(vnode: any, container: any) {
     // 如果是string类型的话，创建一个element元素
-    const el = document.createElement(vnode.type);
+    const el = (vnode.el = document.createElement(vnode.type))
+
     // 将对应的props和children添加到创建的el上
     const {children, props} = vnode
     // 根据children的不同类型去做不同的处理
@@ -63,21 +64,24 @@ function processComponent(vnode:any, container: any) {
     mountComponent(vnode, container)
 }
 
-function mountComponent(vnode: any, container) {
+function mountComponent(initialVNode: any, container) {
     // 创建组件实例
-    const instance = createComponentInstance(vnode)
+    const instance = createComponentInstance(initialVNode)
 
     setupComponent(instance)
 
-    setupRenderEffect(instance, container)
+    setupRenderEffect(instance, initialVNode, container)
 }
 
 
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, initialVNode, container: any) {
     const {proxy} = instance
     const subTree = instance.render.call(proxy)
 
     patch(subTree, container)
+
+    // 所有的element类型都mount处理完成之后再执行
+    initialVNode.el = subTree.el
 }
 
 
