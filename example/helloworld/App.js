@@ -1,10 +1,12 @@
 import {h} from '../../lib/guide-mini-vue.esm.js'
 
+import Foo from './Foo.js'
+
 // 为了便于在浏览器上调试 this.$el
 window.self = null
 
 export const App = {
-
+    name: 'App',
     render() {
         window.self = this;
         return h(
@@ -17,7 +19,10 @@ export const App = {
                 }
             }, 
             // 此时读取this.msg会在页面上显示undefined，要想读取到可以使用代理对象进行实现
-            `hi ${this.msg}`
+            // `hi ${this.msg}`
+            [h('div', {}, this.msg), h(Foo, {count: 1})]
+            
+
             // string类型 
             // 'hi hello world'
 
