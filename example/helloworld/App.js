@@ -11,7 +11,10 @@ export const App = {
             'div', 
             {
                 id: 'root',
-                class: ['red', 'hard']
+                class: ['red', 'hard'],
+                onClick() {
+                    console.log('click')
+                }
             }, 
             // 此时读取this.msg会在页面上显示undefined，要想读取到可以使用代理对象进行实现
             `hi ${this.msg}`

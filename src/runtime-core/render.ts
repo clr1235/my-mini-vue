@@ -46,7 +46,16 @@ function mountElement(vnode: any, container: any) {
     // 将vnode的props对象设置到el的属性上
     for(const key in props) {
         const val = props[key]
-        el.setAttribute(key, val)
+        // 拿到props对象中的所有key做处理，以on开头第三个字段为大写的key则认为是事件
+        const isOn = (key) => /^on[A-Z]/.test(key);
+        if (isOn(key)) {
+            // 为el添加事件
+            const eventName = key.slice(2).toLowerCase()
+            el.addEventListener(eventName, val)
+        } else {
+            el.setAttribute(key, val)
+        }
+        
     }
     // 将创建好的el添加到container容器上
     container.append(el)
