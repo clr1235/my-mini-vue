@@ -1,6 +1,6 @@
-import { isObject } from '../shared/index'
 import { ShapeFlags } from '../shared/shapeFlags'
 import {createComponentInstance, setupComponent} from './component'
+import { Fragment } from './vnode'
 
 export function render(vnode, container) {
     // 调用patch，方便后续进行递归处理
@@ -12,13 +12,22 @@ function patch(vnode, container) {
     // 处理组件  判断vnode是不是一个element，如果是component的话
     // console.log(vnode.type, '=s=s=s=s=s=>>>>', vnode )
     // 根据vnode的类型做不同的处理
-    const {shapeFlag} = vnode
-    if (shapeFlag & ShapeFlags.ELEMENT) { // 基于&运算符进行处理
-        processElement(vnode, container)
-    } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-        processComponent(vnode, container)
+    const {shapeFlag, type} = vnode
+    switch (type) {
+        case Fragment: {
+            processFragment(vnode, container)
+        }
+        break;
+        
+
+        default: {
+            if (shapeFlag & ShapeFlags.ELEMENT) { // 基于&运算符进行处理
+                processElement(vnode, container)
+            } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+                processComponent(vnode, container)
+            }
+        }
     }
-    
 }
 
 
@@ -95,4 +104,8 @@ function setupRenderEffect(instance: any, initialVNode, container: any) {
     initialVNode.el = subTree.el
 }
 
+
+function processFragment(vnode: any, container: any) {
+    mountChildren(vnode, container)
+}
 
