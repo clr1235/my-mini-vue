@@ -1,4 +1,5 @@
 import { isObject } from '../shared/index'
+import { ShapeFlags } from '../shared/shapeFlags'
 import {createComponentInstance, setupComponent} from './component'
 
 export function render(vnode, container) {
@@ -9,11 +10,12 @@ export function render(vnode, container) {
 function patch(vnode, container) {
     // debugger
     // 处理组件  判断vnode是不是一个element，如果是component的话
-    console.log(vnode.type, '=s=s=s=s=s=>>>>', vnode )
+    // console.log(vnode.type, '=s=s=s=s=s=>>>>', vnode )
     // 根据vnode的类型做不同的处理
-    if (typeof vnode.type === 'string') {
+    const {shapeFlag} = vnode
+    if (shapeFlag & ShapeFlags.ELEMENT) { // 基于&运算符进行处理
         processElement(vnode, container)
-    } else if (isObject(vnode.type)) {
+    } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
         processComponent(vnode, container)
     }
     
@@ -33,11 +35,11 @@ function mountElement(vnode: any, container: any) {
     const el = (vnode.el = document.createElement(vnode.type))
 
     // 将对应的props和children添加到创建的el上
-    const {children, props} = vnode
+    const {children, props, shapeFlag} = vnode
     // 根据children的不同类型去做不同的处理
-    if (typeof children === 'string') {
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
         el.textContent = children
-    } else if (Array.isArray(children)) {
+    } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         // 如果h函数中的第三个参数children是数组类型的话，其实它的每一项还是一个vnode，则需要遍历调用patch进行处理
         mountChildren(vnode, el)
     }
