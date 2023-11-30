@@ -1,6 +1,6 @@
 import { ShapeFlags } from '../shared/shapeFlags'
 import {createComponentInstance, setupComponent} from './component'
-import { Fragment } from './vnode'
+import { Fragment, Text } from './vnode'
 
 export function render(vnode, container) {
     // 调用patch，方便后续进行递归处理
@@ -16,8 +16,13 @@ function patch(vnode, container) {
     switch (type) {
         case Fragment: {
             processFragment(vnode, container)
+            break;
         }
-        break;
+        
+        case Text: {
+            processText(vnode, container)
+            break;
+        }
         
 
         default: {
@@ -107,5 +112,13 @@ function setupRenderEffect(instance: any, initialVNode, container: any) {
 
 function processFragment(vnode: any, container: any) {
     mountChildren(vnode, container)
+}
+
+function processText(vnode: any, container: any) {
+    const {children} = vnode
+    // 创建文本节点
+    const textNode = (vnode.el = document.createTextNode(children))
+    // 将创建的文本节点添加到contaier上
+    container.append(textNode)
 }
 
