@@ -8,7 +8,10 @@ export const App = {
         // slot
         const app = h('div', {}, 'app')
         // 该h函数的children需要渲染在子组件Foo中
-        const foo = h(Foo, {}, h('p', {}, 'app中写入的slot数据'))
+        const foo = h(Foo, {}, [
+            h('p', {}, 'app中写入的slot数据'),
+            h('p', {}, '父组件app中要往子组件Foo中写入的数据')
+        ])
 
 
         return h('div', {}, [app, foo])

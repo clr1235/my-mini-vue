@@ -1,4 +1,4 @@
-import {h} from '../../lib/guide-mini-vue.esm.js'
+import {h, renderSlots} from '../../lib/guide-mini-vue.esm.js'
 
 export const Foo = {
     setup() {
@@ -14,7 +14,7 @@ export const Foo = {
 
         // 在Foo组件内部需要读取到父组件App中的foo变量的h函数创建的vnode的children，并将其渲染.
         // 使用this.$slots实现
-        return h('div', {}, [foo, this.$slots])
+        return h('div', {}, [foo, renderSlots(this.$slots)])
     }
 }
 
