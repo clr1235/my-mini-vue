@@ -15,11 +15,16 @@ export const App = {
 
 
         // 具名插槽
-        const foo = h(Foo, {}, {
-            header: h('p', {}, 'header'),
-            footer: h('p', {}, 'footer')
-        })
+        // const foo = h(Foo, {}, {
+        //     header: h('p', {}, 'header'),
+        //     footer: h('p', {}, 'footer')
+        // })
 
+        // 作用域插槽
+        const foo = h(Foo, {}, {
+            header: ({age}) => h('p', {}, 'header' + age),
+            footer: () => h('p', {}, 'footer')
+        })
 
         return h('div', {}, [app, foo])
     },
