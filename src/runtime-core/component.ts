@@ -2,6 +2,7 @@ import { shallowReadonly } from "../reactivity/reactive"
 import { emit } from "./componentEmit"
 import { initProps } from "./componentProps"
 import { PublicInstanceProxyHandles } from "./componentPublicInstance"
+import { initSlots } from "./componentSlots"
 
 export function createComponentInstance(vnode) {
     const compoent = {
@@ -9,7 +10,8 @@ export function createComponentInstance(vnode) {
         type: vnode.type,
         setupState: {},
         props: {},
-        emit: () => {}
+        emit: () => {},
+        slots: {},
     }
     // 使用 bind 内置了传递第一个参数 compoent，以便于用户只需要关注传递emit事件名就可以
     compoent.emit = emit.bind(null, compoent) as any;
@@ -22,6 +24,7 @@ export function setupComponent(instance:any) {
     // 初始化props
     initProps(instance, instance.vnode.props)
     // 初始化slots
+    initSlots(instance, instance.vnode.children)
 
     setupStateFulComponent(instance) 
 }
